@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Java Blog App</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <h1>Welcome to the Java Blog!</h1>
+    <form onsubmit="submitPost()">
+    <input type="text" placeholder="Enter title..." name="title"/>
+    <br />
+        <textarea rows="5" cols="20" placeholder="Enter content..." name="content"></textarea>
+        <br />
+        <input type="submit" value="Post" />
+    </form>
+    <hr />
+    <div class="post" th:each="post: ${posts}">
+        <h2 th:text="${post.title}" />
+        <p th:text="${post.content}" />
+    </div>
+<script>
+    async function submitPost() {
+        const {event} = window;
+        event.preventDefault();
+        const form = new FormData(event.target);
+        const title = form.get("title");
+        const content = form.get("content");
+
+        await fetch("http://localhost:8080/api/posts", {
+            method: "POST",
+            mode: "cors",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({title: title, content: content}),
+        }).then(res => {
+            console.log(res);
+            return window.location.reload();
+        })
+        .catch(err => {
+            console.error(err);
+            return alert("Something went wrong");
+        });
+
+    }
+
+</script>
+</body>
+</html>
