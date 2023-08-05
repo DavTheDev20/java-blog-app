@@ -31,11 +31,10 @@
       async function submitPost() {
         const { event } = window;
         event.preventDefault();
-        const form = new FormData(event.target);
-        const title = form.get('title');
-        const content = form.get('content');
+        let title = document.querySelector('input[name="title"]');
+        let content = document.querySelector('textarea[name="content"]');
 
-        if (!title || !content)
+        if (!title.value || !content.value)
           return alert('Must have title and content to post.');
 
         await fetch('http://localhost:8080/api/posts', {
@@ -45,10 +44,12 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ title: title, content: content }),
+          body: JSON.stringify({ title: title.value, content: content.value }),
         })
           .then((res) => {
             console.log(res);
+            title.value = "";
+            content.value = "";
             return window.location.reload();
           })
           .catch((err) => {
